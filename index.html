@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SymbolicLabs – Applied AI Engineering</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SymbolicLabs is a German technology company specializing in custom AI systems, RAG platforms, intelligent chatbots, and secure AI infrastructure made in Germany." />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f7ff;
+      --bg-soft: #ffffff;
+      --accent: #4f46e5;
+      --accent-soft: #a5b4fc;
+      --accent-strong: #22d3ee;
+      --text-main: #0f172a;
+      --text-soft: #6b7280;
+      --border-soft: rgba(148, 163, 184, 0.4);
+      --shadow-soft: 0 20px 45px rgba(15, 23, 42, 0.12);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e0f2fe 0, #f5f7ff 45%, #eef2ff 100%);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Background orbits */
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(129, 140, 248, 0.22), transparent 55%),
+        radial-gradient(circle at 80% 20%, rgba(45, 212, 191, 0.18), transparent 55%),
+        radial-gradient(circle at 50% 90%, rgba(56, 189, 248, 0.16), transparent 55%);
+      mix-blend-mode: screen;
+    }
+
+    body::after {
+      filter: blur(8px);
+      opacity: 0.6;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-orb {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background:
+        conic-gradient(from 210deg, #22d3ee, #4f46e5, #a5b4fc, #22d3ee);
+      box-shadow:
+        0 0 0 1px rgba(148, 163, 184, 0.5),
+        0 10px 30px rgba(15, 23, 42, 0.25);
+      position: relative;
+      transform-style: preserve-3d;
+      animation: orb-spin 10s linear infinite;
+    }
+
+    .logo-orb::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: inherit;
+      background: radial-gradient(circle at 30% 25%, #f9fafb, rgba(15, 23, 42, 0.05));
+    }
+
+    @keyframes orb-spin {
+      0% {
+        transform: rotate3d(0.3, 1, 0, 0deg);
+      }
+      100% {
+        transform: rotate3d(0.3, 1, 0, 360deg);
+      }
+    }
+
+    .logo-text-main {
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.94rem;
+    }
+
+    .logo-text-sub {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+    }
+
+    nav {
+      display: flex;
+      gap: 16px;
+      font-size: 0.86rem;
+      color: var(--text-soft);
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: inherit;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    nav a:hover {
+      border-color: rgba(148, 163, 184, 0.6);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-main);
+    }
+
+    /* Layout sections */
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    section {
+      scroll-margin-top: 88px;
+    }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-left {
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 10px 4px 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 30px rgba(148, 163, 184, 0.35);
+      margin-bottom: 18px;
+      font-size: 0.76rem;
+      color: var(--text-soft);
+    }
+
+    .badge-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #f9fafb, #4f46e5);
+      box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.2);
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 4vw, 2.9rem);
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(120deg, #4f46e5, #22d3ee);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-soft);
+      max-width: 600px;
+    }
+
+    .hero-subtitle-de {
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: var(--text-soft);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(130deg, #4f46e5, #22d3ee);
+      color: #f9fafb;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 26px 40px rgba(15, 23, 42, 0.25);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: rgba(148, 163, 184, 0.7);
+      color: var(--text-main);
+    }
+
+    .btn-ghost:hover {
+      background: #ffffff;
+      border-color: #4f46e5;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 22px;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .meta-item strong {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--text-main);
+    }
+
+    .hero-right {
+      position: relative;
+      height: 100%;
+    }
+
+    .hero-orbit {
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.9), rgba(15, 23, 42, 0.03));
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .hero-orbit::before {
+      content: "";
+      position: absolute;
+      width: 220%;
+      height: 220%;
+      left: -60%;
+      top: -60%;
+      border-radius: 50%;
+      border: 1px dashed rgba(148, 163, 184, 0.35);
+      transform-origin: center;
+      animation: orbit-spin 26s linear infinite;
+    }
+
+    .hero-orbit::after {
+      content: "";
+      position: absolute;
+      inset: 30px;
+      border-radius: inherit;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      pointer-events: none;
+    }
+
+    @keyframes orbit-spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hero-orbit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.86rem;
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(79, 70, 229, 0.06);
+      color: #4f46e5;
+      border: 1px solid rgba(129, 140, 248, 0.5);
+      font-size: 0.75rem;
+    }
+
+    .hero-orbit-main {
+      position: relative;
+      padding-top: 16px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hero-orbit-main h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .hero-orbit-main p {
+      font-size: 0.84rem;
+      color: var(--text-soft);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-sphere {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-left: auto;
+      background:
+        radial-gradient(circle at 30% 20%, #f9fafb, #e0f2fe 35%, #4f46e5 80%);
+      box-shadow:
+        0 0 0 8px rgba(191, 219, 254, 0.6),
+        0 24px 40px rgba(15, 23, 42, 0.35);
+      position: relative;
+      transform-style: preserve-3d;
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .hero-sphere::after {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      border-radius: inherit;
+      border: 1px solid rgba(248, 250, 252, 0.9);
+      box-shadow: inset 0 0 30px rgba(15, 23, 42, 0.2);
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate3d(0, 0, 0) rotate3d(1, -1, 0, 6deg);
+      }
+      50% {
+        transform: translate3d(0, -10px, 15px) rotate3d(1, -0.6, 0.2, -4deg);
+      }
+      100% {
+        transform: translate3d(0, 0, 0) rotate3d(1, -1, 0, 6deg);
+      }
+    }
+
+    .hero-orbit-footer {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* 3D card grid */
+    .section-heading {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .section-kicker {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.72rem;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .section-subtitle {
+      font-size: 0.98rem;
+      color: var(--text-soft);
+      max-width: 620px;
+    }
+
+    .grid-3d {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .card-3d {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.92));
+      border: 1px solid var(--border-soft);
+      padding: 16px 16px 18px;
+      box-shadow: 0 14px 30px rgba(148, 163, 184, 0.25);
+      transform-style: preserve-3d;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .card-3d::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 0 0, rgba(129, 140, 248, 0.3), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .card-3d:hover {
+      transform: translateY(-6px) rotateX(5deg) rotateY(-5deg);
+      box-shadow: 0 26px 40px rgba(15, 23, 42, 0.3);
+      border-color: rgba(79, 70, 229, 0.6);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(219, 234, 254, 0.98));
+    }
+
+    .card-3d:hover::before {
+      opacity: 1;
+    }
+
+    .card-3d h3 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .tagline {
+      font-size: 0.76rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 8px;
+    }
+
+    .card-3d p {
+      font-size: 0.86rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .chips-small {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.7rem;
+      margin-top: 4px;
+    }
+
+    .chip-soft {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(79, 70, 229, 0.06);
+      color: #4f46e5;
+      border: 1px solid rgba(129, 140, 248, 0.6);
+    }
+
+    /* Papyrus section */
+    .split {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border-radius: var(--radius-lg);
+      padding: 18px 18px 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 18px 36px rgba(148, 163, 184, 0.3);
+    }
+
+    .panel h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    .panel p {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .panel-list {
+      list-style: none;
+      margin-top: 8px;
+      font-size: 0.86rem;
+      color: var(--text-soft);
+    }
+
+    .panel-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .panel-bullet {
+      margin-top: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25);
+      flex-shrink: 0;
+    }
+
+    /* Case study / Germany section */
+    .two-cols {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .badge-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      font-size: 0.74rem;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .badge-outline span {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(187, 247, 208, 0.8);
+    }
+
+    /* Contact */
+    .contact {
+      margin-top: 24px;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 18px 18px 20px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(219, 234, 254, 0.98));
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .contact h3 {
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .contact p {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .contact-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .hero-right {
+        order: -1;
+      }
+      .hero-orbit {
+        margin-top: 10px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav {
+        width: 100%;
+      }
+      .grid-3d {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .split, .two-cols {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .grid-3d {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .page {
+        padding-inline: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo">
+        <div class="logo-orb"></div>
+        <div>
+          <div class="logo-text-main">SymbolicLabs</div>
+          <div class="logo-text-sub">Applied AI Engineering</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#papyrus">Papyrus&nbsp;AI</a>
+        <a href="#case-study">Case Study</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero" id="top">
+        <div class="hero-left reveal">
+          <div class="hero-badge">
+            <div class="badge-dot"></div>
+            <span>Made in Germany · DSGVO-compliant AI &amp; infrastructure</span>
+          </div>
+          <h1 class="hero-title">
+            Engineering <span>custom AI systems</span> for real-world impact.
+          </h1>
+          <p class="hero-subtitle">
+            SymbolicLabs is a German technology company specializing in bespoke AI systems&nbsp;— from Generative AI and Retrieval-Augmented Generation (RAG) to intelligent chatbots and specialized machine learning applications.
+          </p>
+          <p class="hero-subtitle hero-subtitle-de">
+            Wir entwickeln individuelle KI-Lösungen, die produktiv eingesetzt, skalierbar betrieben und exakt auf Ihr Geschäftsmodell zugeschnitten sind.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="mailto:kian@symboliclabs.me">
+              Talk to us
+            </a>
+            <a class="btn btn-ghost" href="#papyrus">
+              Explore Papyrus AI
+            </a>
+          </div>
+          <div class="hero-meta">
+            <div class="meta-item">
+              <strong>Applied AI Engineering</strong>
+              Document intelligence, conversational AI, agents &amp; automation.
+            </div>
+            <div class="meta-item">
+              <strong>Secure EU Infrastructure</strong>
+              All workloads operated in Germany with strict GDPR compliance.
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right reveal">
+          <div class="hero-orbit">
+            <div class="hero-orbit-header">
+              <span class="pill">Papyrus AI · Document Intelligence</span>
+              <span style="font-size:0.78rem;color:var(--text-soft);">LLM-ready document pipelines</span>
+            </div>
+            <div class="hero-orbit-main">
+              <div>
+                <h3>From raw PDFs to semantic search &amp; RAG.</h3>
+                <p>
+                  Papyrus transforms unstructured PDFs, images and scans into structured, searchable, AI-ready data&nbsp;— powering question answering, workflows and automation.
+                </p>
+                <div class="chip-row">
+                  <span class="chip">Universal extraction</span>
+                  <span class="chip">Quality-agnostic</span>
+                  <span class="chip">RAG-ready embeddings</span>
+                  <span class="chip">Scales from files to millions</span>
+                </div>
+              </div>
+              <div class="hero-sphere"></div>
+            </div>
+            <div class="hero-orbit-footer">
+              <span>Built with Google Cloud · Vertex AI · Cloud Run · Document AI</span>
+              <span>Designed for insurance, finance, industry &amp; beyond.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About / Services -->
+      <section id="services" class="reveal">
+        <div class="section-kicker">What we do</div>
+        <h2 class="section-heading">Applied AI, end-to-end.</h2>
+        <p class="section-subtitle">
+          We combine modern Large Language Models with solid engineering to design, build and operate AI systems that fit your business&nbsp;— from compact proofs of concept to production-grade platforms.
+        </p>
+
+        <div class="grid-3d">
+          <article class="card-3d">
+            <div class="tagline">AI Systems &amp; RAG</div>
+            <h3>Custom AI solutions</h3>
+            <p>
+              Design and implementation of Generative AI applications, retrieval-augmented generation (RAG) systems, intelligent chatbots and autonomous agents tailored to your domain, data and workflows.
+            </p>
+            <div class="chips-small">
+              <span class="chip-soft">LLMs &amp; embeddings</span>
+              <span class="chip-soft">Conversational AI</span>
+              <span class="chip-soft">Knowledge bases</span>
+            </div>
+          </article>
+
+          <article class="card-3d">
+            <div class="tagline">Infrastructure</div>
+            <h3>Secure, scalable platforms</h3>
+            <p>
+              We provide the infrastructure to run your AI and software solutions securely and efficiently in Germany, including backup and security concepts, observability and lifecycle management.
+            </p>
+            <div class="chips-small">
+              <span class="chip-soft">DSGVO-konform</span>
+              <span class="chip-soft">Cloud &amp; on-prem</span>
+              <span class="chip-soft">High availability</span>
+            </div>
+          </article>
+
+          <article class="card-3d">
+            <div class="tagline">Software Engineering</div>
+            <h3>Web, mobile &amp; custom apps</h3>
+            <p>
+              From concept to QA, we build tailored web apps, mobile apps and backend systems that integrate AI components seamlessly into existing landscapes and business processes.
+            </p>
+            <div class="chips-small">
+              <span class="chip-soft">Web &amp; APIs</span>
+              <span class="chip-soft">Mobile</span>
+              <span class="chip-soft">Enterprise integration</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- About company -->
+      <section id="about" class="reveal">
+        <div class="section-kicker">About SymbolicLabs</div>
+        <h2 class="section-heading">German engineering, AI-native roots.</h2>
+        <p class="section-subtitle">
+          Our team traces back to 2019, when we built an influencer discovery search engine powered by advanced machine learning. Today we channel that experience into practical AI solutions that create measurable value across industries.
+        </p>
+      </section>
+
+      <!-- Papyrus AI -->
+      <section id="papyrus" class="reveal">
+        <div class="section-kicker">Featured solution</div>
+        <h2 class="section-heading">Papyrus AI · Document Intelligence &amp; RAG Automation.</h2>
+        <p class="section-subtitle">
+          Papyrus turns unstructured document archives into live, queryable knowledge&nbsp;— with pipelines that ingest PDFs, images and scans, extract entities and relationships, and feed domain-specific RAG systems.
+        </p>
+
+        <div class="split">
+          <div class="panel">
+            <h3>How Papyrus works with Google Cloud</h3>
+            <p>
+              Papyrus uses Google Cloud as its backbone: documents land in Cloud Storage, are processed with Cloud Run and Cloud Functions, enriched via Document AI, and stored in structured form for analytics and search. Vertex AI provides embeddings and generative models that power RAG pipelines and semantic search.
+            </p>
+            <ul class="panel-list">
+              <li>
+                <span class="panel-bullet"></span>
+                <span><strong>Universal ingestion</strong> of PDFs, scans and images, independent of quality.</span>
+              </li>
+              <li>
+                <span class="panel-bullet"></span>
+                <span><strong>Structured data extraction</strong> for entities, keys and relationships.</span>
+              </li>
+              <li>
+                <span class="panel-bullet"></span>
+                <span><strong>RAG-ready embeddings</strong> for downstream question answering and agents.</span>
+              </li>
+              <li>
+                <span class="panel-bullet"></span>
+                <span><strong>Scalable architecture</strong> that grows from single files to millions of documents.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>Built-in security &amp; compliance</h3>
+            <p>
+              As a provider we understand the specific requirements of the German and European markets. All infrastructure can be operated fully in German regions with strict data protection and audit-ready logging.
+            </p>
+            <ul class="panel-list">
+              <li>
+                <span class="panel-bullet"></span>
+                <span>GDPR-compliant data handling with regional storage and encryption in transit and at rest.</span>
+              </li>
+              <li>
+                <span class="panel-bullet"></span>
+                <span>Fine-grained access control with IAM, service perimeters and dedicated project separation.</span>
+              </li>
+              <li>
+                <span class="panel-bullet"></span>
+                <span>Backup, disaster recovery and observability built into the platform by design.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Case Study & Germany -->
+      <section id="case-study" class="reveal">
+        <div class="two-cols">
+          <div class="panel">
+            <div class="badge-outline">
+              <span></span> Case study · Insurance
+            </div>
+            <h3>DEMV Systems – Automating insurance document flows.</h3>
+            <p>
+              For DEMV Systems we engineered an AI-powered pipeline that automatically extracts insurance data from thousands of PDF documents every day. Papyrus normalises heterogeneous inputs, extracts key fields and exposes them to downstream systems via APIs and search.
+            </p>
+            <p>
+              The result: dramatically reduced manual processing, higher data quality and the ability to query complex document histories in seconds instead of hours.
+            </p>
+          </div>
+
+          <div class="panel">
+            <div class="badge-outline">
+              <span></span> Made in Germany
+            </div>
+            <h3>Designed for European enterprises.</h3>
+            <p>
+              Our complete IT infrastructure can be hosted in Germany, ensuring low latency, strong data protection and full alignment with EU regulations. We partner with clients from first idea and proof-of-concept all the way to stable operations.
+            </p>
+            <p>
+              Whether you need a focused prototype or a large-scale enterprise roll-out, we adapt architectures, deployment models and governance to your specific requirements.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section id="contact" class="contact reveal">
+        <div>
+          <h3>Ready to explore what AI can do for your business?</h3>
+          <p>
+            Tell us about your data, processes and goals&nbsp;— we’ll help you design and build a solution that fits. Consultations are available in English and German.
+          </p>
+        </div>
+        <div class="contact-actions">
+          <a class="btn btn-primary" href="mailto:kian@symboliclabs.me">
+            Contact: kian@symboliclabs.me
+          </a>
+          <a class="btn btn-ghost" href="#top">
+            Back to top
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© <span id="year"></span> SymbolicLabs · All rights reserved.</span>
+      <span>Website generated for GitHub Pages · <a href="https://symboliclabs.me" target="_blank" rel="noreferrer">symboliclabs.me</a></span>
+    </footer>
+  </div>
+
+  <script>
+    // Dynamic year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Simple scroll reveal
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
